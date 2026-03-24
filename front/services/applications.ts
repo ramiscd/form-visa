@@ -15,6 +15,7 @@ import {
   mockAdminApplications,
   mockApplicationDetail 
 } from './mock-data'
+import { api } from './api'
 
 // Armazenamento local para respostas (simula persistência)
 let savedAnswers = { ...mockSavedAnswers }
@@ -41,19 +42,18 @@ export const applicationService = {
   },
 
   async getFormStructure(): Promise<FormStructure> {
-    await delay(400)
-    return mockFormStructure
+    return api.get('/form_structure')
   },
 
-  async getSavedAnswers(): Promise<Record<number, string | boolean | number>> {
-    await delay(300)
-    return savedAnswers
+  async getSavedAnswers(): Promise<Record<number, any>> {
+    return api.get('/answers')
   },
 
   async saveAnswer(payload: SaveAnswerPayload): Promise<{ success: boolean }> {
-    await delay(200)
-    savedAnswers[payload.questionId] = payload.value
-    return { success: true }
+    return api.post('/answers', {
+      question_id: payload.questionId,
+      value: payload.value,
+    })
   },
 
   async submitApplication(): Promise<{ success: boolean }> {

@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { FileText, Loader2, AlertCircle } from 'lucide-react'
+import {testApi} from '@/services/test-api'
 
 const loginSchema = z.object({
   email: z.string().email('Digite um email válido'),
@@ -132,7 +133,7 @@ export default function LoginPage() {
             </div>
           </CardContent>
         </Card>
-
+        <Button onClick={testApi}>Teste</Button>
         <p className="text-center text-xs text-muted-foreground">
           Credenciais de teste: cliente@teste.com / 123456
         </p>
