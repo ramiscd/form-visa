@@ -17,5 +17,8 @@ Rails.application.routes.draw do
     get '/form_structure', to: 'forms#show'
     post '/answers', to: 'answers#create'
     get '/answers', to: 'answers#index'
+    get 'applications/current', to: 'applications#current'
+    get 'applications', to: 'applications#admin_index'
+    get 'applications/:id', to: 'applications#show'
   end
 end

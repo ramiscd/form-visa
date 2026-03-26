@@ -18,7 +18,7 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const token = this.getToken()
-    
+
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       ...options.headers,
@@ -35,11 +35,12 @@ class ApiClient {
 
     if (!response.ok) {
       if (response.status === 401) {
-        // Token inválido ou expirado
-        if (typeof window !== 'undefined') {
+        // só remove token se EXISTIA token
+        if (token) {
           localStorage.removeItem('auth_token')
-          window.location.href = '/login'
         }
+
+        throw new Error('Unauthorized')
       }
       const error = await response.json().catch(() => ({ message: 'Erro desconhecido' }))
       throw new Error(error.message || `HTTP error! status: ${response.status}`)
@@ -72,7 +73,7 @@ class ApiClient {
 
   async uploadFile<T>(endpoint: string, formData: FormData): Promise<T> {
     const token = this.getToken()
-    
+
     const headers: HeadersInit = {}
     if (token) {
       (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`

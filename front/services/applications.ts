@@ -1,19 +1,19 @@
-import type { 
-  Application, 
-  FormStructure, 
-  SaveAnswerPayload, 
+import type {
+  Application,
+  FormStructure,
+  SaveAnswerPayload,
   Document,
   AdminApplication,
-  ApplicationDetail 
+  ApplicationDetail
 } from '@/types'
-import { 
-  delay, 
-  mockCurrentApplication, 
-  mockFormStructure, 
+import {
+  delay,
+  mockCurrentApplication,
+  mockFormStructure,
   mockSavedAnswers,
   mockDocuments,
   mockAdminApplications,
-  mockApplicationDetail 
+  mockApplicationDetail
 } from './mock-data'
 import { api } from './api'
 
@@ -24,21 +24,7 @@ let documents = [...mockDocuments]
 export const applicationService = {
   // Client APIs
   async getCurrentApplication(): Promise<Application> {
-    await delay(500)
-    
-    // Calcula progresso baseado nas respostas
-    const totalQuestions = mockFormStructure.sections.reduce(
-      (acc, section) => acc + section.questions.filter(q => q.required).length, 
-      0
-    )
-    const answeredQuestions = Object.keys(savedAnswers).length
-    const progress = Math.round((answeredQuestions / totalQuestions) * 100)
-
-    return {
-      ...mockCurrentApplication,
-      progress: Math.min(progress, 100),
-      status: progress >= 100 ? 'completed' : 'in_progress',
-    }
+    return api.get('/applications/current')
   },
 
   async getFormStructure(): Promise<FormStructure> {
@@ -68,11 +54,11 @@ export const applicationService = {
   },
 
   async uploadDocument(
-    type: Document['type'], 
+    type: Document['type'],
     file: File
   ): Promise<Document> {
     await delay(1000)
-    
+
     const newDoc: Document = {
       id: `doc-${Date.now()}`,
       type,
@@ -81,11 +67,11 @@ export const applicationService = {
       uploadedAt: new Date().toISOString(),
       status: 'pending',
     }
-    
+
     // Remove documento antigo do mesmo tipo
     documents = documents.filter(d => d.type !== type)
     documents.push(newDoc)
-    
+
     return newDoc
   },
 
@@ -95,31 +81,13 @@ export const applicationService = {
     return { success: true }
   },
 
-  // Admin APIs
-  async getAdminApplications(
-    status?: Application['status']
-  ): Promise<AdminApplication[]> {
-    await delay(600)
-    
-    if (status) {
-      return mockAdminApplications.filter(app => app.status === status)
-    }
-    return mockAdminApplications
+  // applicationService.ts
+  async getAdminApplications(status?: Application['status']): Promise<AdminApplication[]> {
+    const params = status ? `?status=${status}` : ''
+    return api.get<AdminApplication[]>(`/applications${params}`)
   },
 
   async getApplicationDetail(id: string): Promise<ApplicationDetail> {
-    await delay(500)
-    
-    const app = mockAdminApplications.find(a => a.id === id)
-    if (!app) {
-      throw new Error('Aplicação não encontrada')
-    }
-    
-    return {
-      ...mockApplicationDetail,
-      id,
-      status: app.status,
-      progress: app.progress,
-    }
+    return api.get<ApplicationDetail>(`/applications/${id}`)
   },
 }

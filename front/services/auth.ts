@@ -13,6 +13,10 @@ export const authService = {
   },
 
   async getCurrentUser(): Promise<User | null> {
+    const token = localStorage.getItem('auth_token')
+
+    if (!token) return null
+
     try {
       return await api.get<User>('/me')
     } catch {

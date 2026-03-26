@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_03_21_043353) do
+ActiveRecord::Schema[7.1].define(version: 2026_03_25_052249) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -30,7 +30,20 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_21_043353) do
     t.integer "progress"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "form_id"
+    t.index ["form_id"], name: "index_applications_on_form_id"
     t.index ["user_id"], name: "index_applications_on_user_id"
+  end
+
+  create_table "documents", force: :cascade do |t|
+    t.bigint "application_id", null: false
+    t.string "doc_type"
+    t.string "file_name"
+    t.string "file_url"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["application_id"], name: "index_documents_on_application_id"
   end
 
   create_table "forms", force: :cascade do |t|
@@ -74,7 +87,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_21_043353) do
 
   add_foreign_key "answers", "applications"
   add_foreign_key "answers", "questions"
+  add_foreign_key "applications", "forms"
   add_foreign_key "applications", "users"
+  add_foreign_key "documents", "applications"
   add_foreign_key "questions", "sections"
   add_foreign_key "sections", "forms"
 end

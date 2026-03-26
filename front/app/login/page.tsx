@@ -133,10 +133,6 @@ export default function LoginPage() {
             </div>
           </CardContent>
         </Card>
-        <Button onClick={testApi}>Teste</Button>
-        <p className="text-center text-xs text-muted-foreground">
-          Credenciais de teste: cliente@teste.com / 123456
-        </p>
       </div>
     </div>
   )
