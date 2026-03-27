@@ -1,5 +1,5 @@
 services:
-  - type: postgres
+  - type: managed_postgres
     name: form-visa-db
     plan: starter
     region: sao-paulo
@@ -13,7 +13,7 @@ services:
         value: back_production
     # Render vai gerar DATABASE_URL automaticamente
 
-  - type: web
+  - type: web_service
     name: form-visa-back
     env: ruby
     region: sao-paulo
@@ -37,7 +37,7 @@ services:
     autoDeploy: true
     preDeployCommand: bundle exec rails db:migrate
 
-  - type: web
+  - type: web_service
     name: form-visa-front
     env: node
     region: sao-paulo
