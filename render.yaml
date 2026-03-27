@@ -1,38 +1,44 @@
-databases:
-  - name: form-visa-db
-    plan: basic-256mb
-    region: oregon
-    databaseName: back_production
+# render.yaml - Deploy mínimo gratuito para teste
 
 services:
+  # Banco de dados Postgres gratuito
+  - type: postgres
+    name: form-visa-db
+    plan: starter
+    region: sao-paulo
+    databaseName: back_production
+    envVars:
+      - key: POSTGRES_USER
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        value: postgres
+      - key: POSTGRES_DB
+        value: back_production
+
+  # Backend Ruby on Rails
   - type: web
     name: form-visa-back
-    runtime: ruby
-    region: oregon
+    env: ruby
+    region: sao-paulo
     branch: main
     rootDir: back
     buildCommand: bundle install
-    preDeployCommand: bundle exec rails db:migrate
     startCommand: bundle exec puma -C config/puma.rb
     envVars:
       - key: DATABASE_URL
         fromDatabase:
           name: form-visa-db
           property: connectionString
-      - key: RAILS_MASTER_KEY
-        sync: false
-      - key: JWT_SECRET
-        sync: false
       - key: ASAAS_WEBHOOK_TOKEN
-        sync: false
-      - key: FRONTEND_FORM_URL
-        value: https://form-visa-front.onrender.com/register
-    autoDeployTrigger: commit
+        value: teste_token
+    autoDeploy: true
+    preDeployCommand: bundle exec rails db:migrate
 
+  # Frontend Next.js
   - type: web
     name: form-visa-front
-    runtime: node
-    region: oregon
+    env: node
+    region: sao-paulo
     branch: main
     rootDir: front
     buildCommand: npm install && npm run build
@@ -40,4 +46,4 @@ services:
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: https://form-visa-back.onrender.com/api
-    autoDeployTrigger: commit
+    autoDeploy: true
