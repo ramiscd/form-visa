@@ -2,7 +2,6 @@ services:
   - type: web
     name: form-visa-back
     env: ruby
-    region: virginia
     branch: main
     rootDir: back
     buildCommand: bundle install
@@ -11,14 +10,13 @@ services:
       - key: DATABASE_URL
         value: postgresql://form_visa_db_user:KKJS0e7GWUjgZ0DSFl3pNiF19exUMFxW@dpg-d730kjhr0fns73fe4g4g-a.virginia-postgres.render.com/form_visa_db
       - key: ASAAS_WEBHOOK_TOKEN
-        value: seu_token_aqui
+        value: your_asaas_token
     autoDeploy: true
     preDeployCommand: bundle exec rails db:migrate
 
   - type: web
     name: form-visa-front
     env: node
-    region: virginia
     branch: main
     rootDir: front
     buildCommand: npm install && npm run build
