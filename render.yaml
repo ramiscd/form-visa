@@ -1,26 +1,32 @@
+databases:
+  - name: form-visa-db
+    plan: free
+
 services:
   - type: web
     name: form-visa-back
-    env: ruby
-    branch: main
+    runtime: ruby
+    plan: free
     rootDir: back
     buildCommand: bundle install
     startCommand: bundle exec puma -C config/puma.rb
     envVars:
       - key: DATABASE_URL
-        value: postgresql://form_visa_db_user:KKJS0e7GWUjgZ0DSFl3pNiF19exUMFxW@dpg-d730kjhr0fns73fe4g4g-a.virginia-postgres.render.com/form_visa_db
+        fromDatabase:
+          name: form-visa-db
+          property: connectionString
       - key: ASAAS_WEBHOOK_TOKEN
-        value: seu_token_aqui
-    autoDeploy: true
+        sync: false
+    autoDeployTrigger: commit
 
   - type: web
     name: form-visa-front
-    env: node
-    branch: main
+    runtime: node
+    plan: free
     rootDir: front
     buildCommand: npm install && npm run build
     startCommand: npm run start
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: https://form-visa-back.onrender.com/api
-    autoDeploy: true
+    autoDeployTrigger: commit
