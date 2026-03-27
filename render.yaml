@@ -1,1 +1,43 @@
-Blueprint
+databases:
+  - name: form-visa-db
+    plan: basic-256mb
+    region: oregon
+    databaseName: back_production
+
+services:
+  - type: web
+    name: form-visa-back
+    runtime: ruby
+    region: oregon
+    branch: main
+    rootDir: back
+    buildCommand: bundle install
+    preDeployCommand: bundle exec rails db:migrate
+    startCommand: bundle exec puma -C config/puma.rb
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: form-visa-db
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: ASAAS_WEBHOOK_TOKEN
+        sync: false
+      - key: FRONTEND_FORM_URL
+        value: https://form-visa-front.onrender.com/register
+    autoDeployTrigger: commit
+
+  - type: web
+    name: form-visa-front
+    runtime: node
+    region: oregon
+    branch: main
+    rootDir: front
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://form-visa-back.onrender.com/api
+    autoDeployTrigger: commit
