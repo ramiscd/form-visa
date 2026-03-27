@@ -1,6 +1,6 @@
 services:
   # Backend Rails
-  - type: web_service
+  - type: web
     name: form-visa-back
     env: ruby
     region: sao-paulo
@@ -17,7 +17,7 @@ services:
     preDeployCommand: bundle exec rails db:migrate
 
   # Frontend Next.js
-  - type: web_service
+  - type: web
     name: form-visa-front
     env: node
     region: sao-paulo
