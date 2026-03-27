@@ -6,23 +6,10 @@ import type {
   AdminApplication,
   ApplicationDetail
 } from '@/types'
-import {
-  delay,
-  mockCurrentApplication,
-  mockFormStructure,
-  mockSavedAnswers,
-  mockDocuments,
-  mockAdminApplications,
-  mockApplicationDetail
-} from './mock-data'
+import { delay } from './mock-data'
 import { api } from './api'
 
-// Armazenamento local para respostas (simula persistência)
-let savedAnswers = { ...mockSavedAnswers }
-let documents = [...mockDocuments]
-
 export const applicationService = {
-  // Client APIs
   async getCurrentApplication(): Promise<Application> {
     return api.get('/applications/current')
   },
@@ -47,41 +34,25 @@ export const applicationService = {
     return { success: true }
   },
 
-  // Document APIs
   async getDocuments(): Promise<Document[]> {
-    await delay(400)
-    return documents
+    return api.get('/applications/current/documents')
   },
 
   async uploadDocument(
     type: Document['type'],
     file: File
   ): Promise<Document> {
-    await delay(1000)
+    const formData = new FormData()
+    formData.append('type', type)
+    formData.append('file', file)
 
-    const newDoc: Document = {
-      id: `doc-${Date.now()}`,
-      type,
-      fileName: file.name,
-      fileUrl: URL.createObjectURL(file),
-      uploadedAt: new Date().toISOString(),
-      status: 'pending',
-    }
-
-    // Remove documento antigo do mesmo tipo
-    documents = documents.filter(d => d.type !== type)
-    documents.push(newDoc)
-
-    return newDoc
+    return api.uploadFile('/applications/current/documents', formData)
   },
 
-  async deleteDocument(documentId: string): Promise<{ success: boolean }> {
-    await delay(400)
-    documents = documents.filter(d => d.id !== documentId)
-    return { success: true }
+  async deleteDocument(documentId: string | number): Promise<{ success: boolean }> {
+    return api.delete(`/documents/${documentId}`)
   },
 
-  // applicationService.ts
   async getAdminApplications(status?: Application['status']): Promise<AdminApplication[]> {
     const params = status ? `?status=${status}` : ''
     return api.get<AdminApplication[]>(`/applications${params}`)

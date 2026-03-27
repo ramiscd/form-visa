@@ -28,5 +28,20 @@ export const authService = {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('auth_token')
     }
+  },
+
+  async register(data: {
+    name: string
+    email: string
+    password: string
+    password_confirmation: string
+  }): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>('/register', data)
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('auth_token', response.token)
+    }
+
+    return response
   }
 }

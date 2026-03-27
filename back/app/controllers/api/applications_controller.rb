@@ -1,4 +1,3 @@
-# app/controllers/api/applications_controller.rb
 class Api::ApplicationsController < ApplicationController
   before_action :authenticate_user!
   before_action :authorize_admin!, only: [:admin_index]
@@ -11,9 +10,8 @@ class Api::ApplicationsController < ApplicationController
     render json: application_response(application)
   end
 
-  # Método mínimo para admin
   def admin_index
-    applications = Application.all.includes(:answers)
+    applications = Application.all.includes(:answers, :documents)
     render json: applications.map { |app| application_response(app) }
   end
 
@@ -30,44 +28,52 @@ class Api::ApplicationsController < ApplicationController
     render json: { error: "Forbidden" }, status: :forbidden unless current_user.role == 'admin'
   end
 
- def application_response(application)
-  {
-    id: application.id,
-    user: {
-      id: application.user.id,
-      name: application.user.name,
-      email: application.user.email
-    },
-    userId: application.user.id,
-    progress: calculate_progress(application),
-    status: calculate_status(application),
-    createdAt: application.created_at,
-    updatedAt: application.updated_at,
-    sections: (application.form&.sections || []).map do |section|
-      {
-        id: section.id,
-        title: section.title,
-        answers: section.questions.map do |q|
-          answer = application.answers.find { |a| a.question_id == q.id }
-          {
-            question: q.label, # <== CORRIGIDO
-            value: answer&.value
-          }
-        end
-      }
-    end,
-    documents: (application.documents || []).map do |doc|
-      {
-        id: doc.id,
-        type: doc.doc_type,
-        fileName: doc.file_name,
-        fileUrl: doc.file_url,
-        uploadedAt: doc.created_at,
-        status: doc.status
-      }
-    end
-  }
-end
+  def application_response(application)
+    {
+      id: application.id,
+      user: {
+        id: application.user.id,
+        name: application.user.name,
+        email: application.user.email
+      },
+      userId: application.user.id,
+      progress: calculate_progress(application),
+      status: calculate_status(application),
+      createdAt: application.created_at,
+      updatedAt: application.updated_at,
+      sections: (application.form&.sections || []).map do |section|
+        {
+          id: section.id,
+          title: section.title,
+          answers: section.questions.map do |q|
+            answer = application.answers.find { |a| a.question_id == q.id }
+            {
+              question: q.label,
+              value: answer&.value
+            }
+          end
+        }
+      end,
+      documents: application.documents.map { |doc| document_response(doc) }
+    }
+  end
+
+  def document_response(doc)
+    {
+      id: doc.id,
+      type: doc.doc_type,
+      fileName: doc.file_name,
+      fileUrl: file_url_for(doc),
+      uploadedAt: doc.created_at,
+      status: doc.status
+    }
+  end
+
+  def file_url_for(doc)
+    return url_for(doc.file) if doc.file.attached?
+
+    doc.file_url
+  end
 
   def calculate_progress(application)
     total_questions = Question.where(required: true).count

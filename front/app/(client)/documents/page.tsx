@@ -32,9 +32,9 @@ export default function DocumentsPage() {
   const { data: documents, isLoading } = useDocuments()
   const uploadDocument = useUploadDocument()
   const deleteDocument = useDeleteDocument()
-  
+
   const [uploadingType, setUploadingType] = useState<DocumentType | null>(null)
-  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
 
   const handleUpload = async (type: DocumentType, file: File) => {
     // Validação de tamanho
@@ -61,7 +61,7 @@ export default function DocumentsPage() {
     }
   }
 
-  const handleDelete = async (documentId: string) => {
+  const handleDelete = async (documentId: number) => {
     setDeletingId(documentId)
     try {
       await deleteDocument.mutateAsync(documentId)
@@ -93,8 +93,8 @@ export default function DocumentsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <Link 
-          href="/dashboard" 
+        <Link
+          href="/dashboard"
           className="mb-2 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -116,9 +116,9 @@ export default function DocumentsPage() {
             description={description}
             document={getDocumentByType(type)}
             onUpload={(file) => handleUpload(type, file)}
-            onDelete={() => {
+            onDelete={async () => {
               const doc = getDocumentByType(type)
-              if (doc) handleDelete(doc.id)
+              if (doc) await handleDelete(doc.id)
             }}
             isUploading={uploadingType === type}
             isDeleting={deletingId === getDocumentByType(type)?.id}

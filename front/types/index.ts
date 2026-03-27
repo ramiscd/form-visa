@@ -85,11 +85,11 @@ export interface SaveAnswerPayload {
 // Document Types
 export type DocumentType = 'passport' | 'photo' | 'additional'
 
-export interface Document {
-  id: string
-  type: DocumentType
+export type Document = {
+  id: number
+  type: 'passport' | 'photo' | 'additional'
   fileName: string
-  fileUrl: string
+  fileUrl: string | null
   uploadedAt: string
   status: 'pending' | 'approved' | 'rejected'
 }
@@ -113,3 +113,4 @@ export interface SectionAnswers {
     value: string | boolean | number
   }[]
 }
+

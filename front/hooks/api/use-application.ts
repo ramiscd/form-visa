@@ -94,7 +94,7 @@ export function useDeleteDocument() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (documentId: string) => 
+    mutationFn: (documentId: number) => 
       applicationService.deleteDocument(documentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: applicationKeys.documents() })
