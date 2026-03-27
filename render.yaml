@@ -1,9 +1,8 @@
 services:
-  # Backend Rails
   - type: web
     name: form-visa-back
     env: ruby
-    region: sao-paulo
+    region: virginia
     branch: main
     rootDir: back
     buildCommand: bundle install
@@ -16,11 +15,10 @@ services:
     autoDeploy: true
     preDeployCommand: bundle exec rails db:migrate
 
-  # Frontend Next.js
   - type: web
     name: form-visa-front
     env: node
-    region: sao-paulo
+    region: virginia
     branch: main
     rootDir: front
     buildCommand: npm install && npm run build
