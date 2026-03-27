@@ -17,5 +17,6 @@ Rails.application.routes.draw do
     post 'applications/current/documents', to: 'documents#create'
     delete 'documents/:id', to: 'documents#destroy'
     post '/register', to: 'auth#register'
+    post "/webhooks/asaas", to: "webhooks#asaas"
   end
 end
