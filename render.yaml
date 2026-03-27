@@ -1,22 +1,13 @@
-# render.yaml - Deploy mínimo gratuito para teste
-
 services:
   # Banco de dados Postgres gratuito
-  - type: postgres
+  - type: managed_postgres
     name: form-visa-db
     plan: starter
     region: sao-paulo
     databaseName: back_production
-    envVars:
-      - key: POSTGRES_USER
-        value: postgres
-      - key: POSTGRES_PASSWORD
-        value: postgres
-      - key: POSTGRES_DB
-        value: back_production
 
-  # Backend Ruby on Rails
-  - type: web
+  # Backend Rails
+  - type: web_service
     name: form-visa-back
     env: ruby
     region: sao-paulo
@@ -30,12 +21,12 @@ services:
           name: form-visa-db
           property: connectionString
       - key: ASAAS_WEBHOOK_TOKEN
-        value: teste_token
+        value: seu_token_aqui
     autoDeploy: true
     preDeployCommand: bundle exec rails db:migrate
 
   # Frontend Next.js
-  - type: web
+  - type: web_service
     name: form-visa-front
     env: node
     region: sao-paulo
