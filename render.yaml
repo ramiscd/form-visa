@@ -9,7 +9,7 @@ services:
     plan: free
     rootDir: back
     buildCommand: bundle install
-    startCommand: startCommand: bundle exec rails db:prepare && bundle exec puma -C config/puma.rb
+    startCommand: bundle exec rails db:prepare && bundle exec puma -C config/puma.rb
     envVars:
       - key: DATABASE_URL
         fromDatabase:
