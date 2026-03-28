@@ -15,8 +15,13 @@ services:
         fromDatabase:
           name: form-visa-db
           property: connectionString
+
+      - key: SECRET_KEY_BASE
+        value: f096b98dfe6ac6be3611fc0141776373eb03f9319f3886ef8cf03cfce36486d71201eb0e2f98bae8c5f87eae1b83b507558584ed5a9201dc360d1e9b3f53ee2d
+
       - key: ASAAS_WEBHOOK_TOKEN
         sync: false
+
     autoDeployTrigger: commit
 
   - type: web
