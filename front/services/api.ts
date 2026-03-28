@@ -1,5 +1,5 @@
 //const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
-const API_BASE_URL = 'https://form-visa-back.onrender.com'
+const API_BASE_URL = 'https://form-visa-back.onrender.com/api'
 
 
 class ApiClient {
