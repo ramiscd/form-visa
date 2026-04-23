@@ -1,6 +1,6 @@
 databases:
   - name: form-visa-db
-    plan: starter
+    plan: basic-256mb
 
 services:
   - type: web
